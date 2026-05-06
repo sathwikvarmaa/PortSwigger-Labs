@@ -1,0 +1,153 @@
+# DOM XSS using document.write
+
+## 📌 Lab Description
+
+This lab contains a DOM-based Cross-Site Scripting (XSS) vulnerability caused by the unsafe use of `document.write()`.
+
+User-controlled data from the URL is written directly into the page without proper sanitization, allowing arbitrary JavaScript execution in the browser.
+
+The objective of the lab is to exploit the vulnerability and execute JavaScript.
+
+---
+
+# 🧠 Vulnerability Type
+
+* DOM-Based Cross-Site Scripting (DOM XSS)
+* Client-Side Injection
+* Unsafe JavaScript Sink (`document.write()`)
+
+---
+
+# 📖 What is DOM XSS?
+
+DOM-based XSS occurs when JavaScript running in the browser processes attacker-controlled data insecurely and writes it back into the DOM.
+
+Unlike reflected or stored XSS, the payload execution happens entirely on the client side.
+
+---
+
+# 🔍 Vulnerable Source & Sink
+
+## Source
+
+The application reads user-controlled data from the URL:
+
+```javascript id="0qzrdq"
+location.search
+```
+
+## Sink
+
+The data is written into the page using:
+
+```javascript id="l26l2x"
+document.write()
+```
+
+Unsafe sinks like `document.write()` can execute attacker-supplied HTML or JavaScript.
+
+---
+
+# 🔬 Vulnerable Code Example
+
+```javascript id="n0ftr3"
+var search = location.search;
+document.write('<img src="/images/' + search + '">');
+```
+
+The application fails to sanitize user input before inserting it into the DOM.
+
+---
+
+# 💥 Payload Used
+
+```html id="j2q0zl"
+"><svg onload=alert(1)>
+```
+
+Encoded version:
+
+```txt id="jlwmxu"
+%22%3E%3Csvg%20onload%3Dalert(1)%3E
+```
+
+---
+
+# 🚀 Exploitation Steps
+
+1. Open the vulnerable page.
+2. Observe that the application reads data from the URL.
+3. Inject a payload into the query string.
+4. Break out of the existing HTML context.
+5. Trigger JavaScript execution.
+
+Example:
+
+```txt id="0brdrz"
+https://vulnerable-website.com/?search="><svg onload=alert(1)>
+```
+
+---
+
+# ✅ Successful Exploit
+
+The malicious payload executed successfully in the victim’s browser, confirming the presence of a DOM XSS vulnerability.
+
+---
+
+# ⚠ Impact
+
+An attacker may:
+
+* Execute arbitrary JavaScript
+* Steal session tokens
+* Hijack user accounts
+* Perform phishing attacks
+* Manipulate DOM content
+* Redirect victims to malicious websites
+
+---
+
+# 🛡 Prevention
+
+## Recommended Mitigations
+
+* Avoid using dangerous sinks like:
+
+  * `document.write()`
+  * `innerHTML`
+  * `eval()`
+
+* Use safe DOM APIs:
+
+  * `textContent`
+  * `createElement()`
+  * `setAttribute()`
+
+* Sanitize and validate user input
+
+* Implement Content Security Policy (CSP)
+
+* Use secure frontend frameworks
+
+---
+
+# 🧰 Tools Used
+
+* Burp Suite
+* Browser Developer Tools
+* PortSwigger Web Security Academy
+
+---
+
+# 📚 Key Learning
+
+This lab demonstrates how unsafe DOM manipulation using `document.write()` can lead to client-side JavaScript injection.
+
+Understanding sources and sinks is critical for identifying DOM-based vulnerabilities during web application testing.
+
+---
+
+# 🏷 Tags
+
+`#DOMXSS` `#XSS` `#JavaScriptSecurity` `#BurpSuite` `#WebSecurity`
